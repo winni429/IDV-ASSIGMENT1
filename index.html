@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSI Data Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>PSI Readings Data</h1>
+    <table id="psiTable">
+        <thead>
+            <tr>
+                <<th>Reading Type</</th>
+                <<th>Value</</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 数据将通过JS动态插入 -->
+        </tbody>
+    </table>
+
+    <script>
+        // 调用API获取数据
+        fetch('https://api.data.gov.sg/v1/environment/psi')
+            .then(response => response.json())
+            .then(data => {
+                const readings = data.items[0].readings; // 获取最新的读数数据
+                const tableBody = document.querySelector('#psiTable tbody');
+                const readingKeys = [
+                    'o3_sub_index', 'pm10_sub_index', 'pm25_sub_index', 
+                    'co_sub_index', 'no2_sub_index', 'so2_sub_index', 
+                    'psi_twenty_four_hourly', 'psi_twenty_four_hourly_national', 
+                    'psi_twenty_four_hourly_north', 'psi_twenty_four_hourly_south', 
+                    'psi_twenty_four_hourly_east', 'psi_twenty_four_hourly_west'
+                ];
+
+                readingKeys.forEach(key => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${key}</td>
+                        <td>${readings[key]}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+</body>
+</html>
