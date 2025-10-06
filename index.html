@@ -75,6 +75,13 @@
             text-align: right;
             margin-bottom: 10px;
         }
+        .refresh-status {
+            color: #3498db;
+            font-size: 0.9em;
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -91,17 +98,18 @@
         </div>
         
         <p class="last-updated">最后更新: <span id="updateTime"></span></p>
+        <p class="refresh-status">下次自动更新: <span id="nextRefreshTime"></span></p>
         
         <table id="psiTable">
             <thead>
                 <tr>
-                    <th>指标类型</th>
-                    <th>中文说明</th>
-                    <th>西部 (West)</th>
-                    <th>东部 (East)</th>
-                    <th>中部 (Central)</th>
-                    <th>南部 (South)</th>
-                    <th>北部 (North)</th>
+                    <<th>指标类型</</th>
+                    <<th>中文说明</</th>
+                    <<th>西部 (West)</</th>
+                    <<th>东部 (East)</</th>
+                    <<th>中部 (Central)</</th>
+                    <<th>南部 (South)</</th>
+                    <<th>北部 (North)</</th>
                 </tr>
             </thead>
             <tbody>
@@ -111,6 +119,10 @@
     </div>
 
     <script>
+        // 配置：刷新间隔（毫秒），这里设为5分钟（300000ms），和API更新频率匹配
+        const REFRESH_INTERVAL = 300000; 
+        let refreshTimer = null;
+
         // 指标类型的中文说明
         const readingTypeLabels = {
             "o3_sub_index": "臭氧子指数",
@@ -149,15 +161,24 @@
                 month: '2-digit',
                 day: '2-digit',
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
+                second: '2-digit'
             });
+        }
+
+        // 计算并显示下次刷新时间
+        function updateNextRefreshTime() {
+            const nextTime = new Date(Date.now() + REFRESH_INTERVAL);
+            document.getElementById('nextRefreshTime').textContent = formatTime(nextTime);
         }
 
         // 渲染表格
         function renderTable(data) {
-            // 更新时间显示
+            // 更新数据时间
             const updateTime = data.items[0].update_timestamp;
             document.getElementById('updateTime').textContent = formatTime(updateTime);
+            // 更新下次刷新时间
+            updateNextRefreshTime();
             
             const readings = data.items[0].readings;
             const tableBody = document.querySelector('#psiTable tbody');
@@ -193,22 +214,41 @@
         }
 
         // 从API获取数据
-        fetch('https://api.data.gov.sg/v1/environment/psi')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('网络响应不正常');
-                }
-                return response.json();
-            })
-            .then(data => {
-                renderTable(data);
-            })
-            .catch(error => {
-                console.error('获取数据时出错:', error);
-                const tableBody = document.querySelector('#psiTable tbody');
-                tableBody.innerHTML = `<tr><td colspan="7">无法加载数据: ${error.message}</td></tr>`;
-            });
+        function fetchAndRenderData() {
+            fetch('https://api.data.gov.sg/v1/environment/psi')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`网络错误: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    renderTable(data);
+                })
+                .catch(error => {
+                    console.error('获取数据失败:', error);
+                    const tableBody = document.querySelector('#psiTable tbody');
+                    tableBody.innerHTML = `<tr><td colspan="7">加载失败: ${error.message}，将在${REFRESH_INTERVAL/60000}分钟后重试</td></tr>`;
+                    // 失败后仍更新下次刷新时间
+                    updateNextRefreshTime();
+                });
+        }
+
+        // 初始化：首次加载数据 + 启动定时刷新
+        function init() {
+            // 首次加载
+            fetchAndRenderData();
+            // 启动定时刷新
+            refreshTimer = setInterval(fetchAndRenderData, REFRESH_INTERVAL);
+        }
+
+        // 页面加载完成后初始化
+        window.onload = init;
+
+        // 页面关闭时清除定时器（避免内存泄漏）
+        window.onunload = function() {
+            if (refreshTimer) clearInterval(refreshTimer);
+        };
     </script>
 </body>
 </html>
-    
