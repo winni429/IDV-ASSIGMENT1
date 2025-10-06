@@ -1,64 +1,134 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSI Data Table</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 20px auto;
+{
+  "region_metadata": [
+    {
+      "name": "west",
+      "label_location": {
+        "latitude": 1.35735,
+        "longitude": 103.7
+      }
+    },
+    {
+      "name": "east",
+      "label_location": {
+        "latitude": 1.35735,
+        "longitude": 103.94
+      }
+    },
+    {
+      "name": "central",
+      "label_location": {
+        "latitude": 1.35735,
+        "longitude": 103.82
+      }
+    },
+    {
+      "name": "south",
+      "label_location": {
+        "latitude": 1.29587,
+        "longitude": 103.82
+      }
+    },
+    {
+      "name": "north",
+      "label_location": {
+        "latitude": 1.41803,
+        "longitude": 103.82
+      }
+    }
+  ],
+  "items": [
+    {
+      "timestamp": "2025-10-06T20:00:00+08:00",
+      "update_timestamp": "2025-10-06T20:01:01+08:00",
+      "readings": {
+        "o3_sub_index": {
+          "west": 3,
+          "east": 14,
+          "central": 7,
+          "south": 7,
+          "north": 9
+        },
+        "pm10_twenty_four_hourly": {
+          "west": 27,
+          "east": 33,
+          "central": 32,
+          "south": 26,
+          "north": 23
+        },
+        "pm10_sub_index": {
+          "west": 27,
+          "east": 33,
+          "central": 32,
+          "south": 26,
+          "north": 23
+        },
+        "co_sub_index": {
+          "west": 3,
+          "east": 4,
+          "central": 2,
+          "south": 4,
+          "north": 4
+        },
+        "pm25_twenty_four_hourly": {
+          "west": 18,
+          "east": 19,
+          "central": 22,
+          "south": 14,
+          "north": 16
+        },
+        "so2_sub_index": {
+          "west": 3,
+          "east": 2,
+          "central": 4,
+          "south": 2,
+          "north": 7
+        },
+        "co_eight_hour_max": {
+          "west": 0,
+          "east": 0,
+          "central": 0,
+          "south": 0,
+          "north": 0
+        },
+        "no2_one_hour_max": {
+          "west": 46,
+          "east": 40,
+          "central": 41,
+          "south": 36,
+          "north": 30
+        },
+        "so2_twenty_four_hourly": {
+          "west": 5,
+          "east": 4,
+          "central": 6,
+          "south": 3,
+          "north": 11
+        },
+        "pm25_sub_index": {
+          "west": 58,
+          "east": 59,
+          "central": 62,
+          "south": 53,
+          "north": 56
+        },
+        "psi_twenty_four_hourly": {
+          "west": 58,
+          "east": 59,
+          "central": 62,
+          "south": 53,
+          "north": 56
+        },
+        "o3_eight_hour_max": {
+          "west": 6,
+          "east": 32,
+          "central": 17,
+          "south": 16,
+          "north": 21
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
-</head>
-<body>
-    <h1>PSI Readings Data</h1>
-    <table id="psiTable">
-        <thead>
-            <tr>
-                <<th>Reading Type</</th>
-                <<th>Value</</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- 数据将通过JS动态插入 -->
-        </tbody>
-    </table>
-
-    <script>
-        // 调用API获取数据
-        fetch('https://api.data.gov.sg/v1/environment/psi')
-            .then(response => response.json())
-            .then(data => {
-                const readings = data.items[0].readings; // 获取最新的读数数据
-                const tableBody = document.querySelector('#psiTable tbody');
-                const readingKeys = [
-                    'o3_sub_index', 'pm10_sub_index', 'pm25_sub_index', 
-                    'co_sub_index', 'no2_sub_index', 'so2_sub_index', 
-                    'psi_twenty_four_hourly', 'psi_twenty_four_hourly_national', 
-                    'psi_twenty_four_hourly_north', 'psi_twenty_four_hourly_south', 
-                    'psi_twenty_four_hourly_east', 'psi_twenty_four_hourly_west'
-                ];
-
-                readingKeys.forEach(key => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${key}</td>
-                        <td>${readings[key]}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    </script>
-</body>
-</html>
+      }
+    }
+  ],
+  "api_info": {
+    "status": "healthy"
+  }
+}
