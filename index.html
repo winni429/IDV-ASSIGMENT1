@@ -1,134 +1,214 @@
-{
-  "region_metadata": [
-    {
-      "name": "west",
-      "label_location": {
-        "latitude": 1.35735,
-        "longitude": 103.7
-      }
-    },
-    {
-      "name": "east",
-      "label_location": {
-        "latitude": 1.35735,
-        "longitude": 103.94
-      }
-    },
-    {
-      "name": "central",
-      "label_location": {
-        "latitude": 1.35735,
-        "longitude": 103.82
-      }
-    },
-    {
-      "name": "south",
-      "label_location": {
-        "latitude": 1.29587,
-        "longitude": 103.82
-      }
-    },
-    {
-      "name": "north",
-      "label_location": {
-        "latitude": 1.41803,
-        "longitude": 103.82
-      }
-    }
-  ],
-  "items": [
-    {
-      "timestamp": "2025-10-06T20:00:00+08:00",
-      "update_timestamp": "2025-10-06T20:01:01+08:00",
-      "readings": {
-        "o3_sub_index": {
-          "west": 3,
-          "east": 14,
-          "central": 7,
-          "south": 7,
-          "north": 9
-        },
-        "pm10_twenty_four_hourly": {
-          "west": 27,
-          "east": 33,
-          "central": 32,
-          "south": 26,
-          "north": 23
-        },
-        "pm10_sub_index": {
-          "west": 27,
-          "east": 33,
-          "central": 32,
-          "south": 26,
-          "north": 23
-        },
-        "co_sub_index": {
-          "west": 3,
-          "east": 4,
-          "central": 2,
-          "south": 4,
-          "north": 4
-        },
-        "pm25_twenty_four_hourly": {
-          "west": 18,
-          "east": 19,
-          "central": 22,
-          "south": 14,
-          "north": 16
-        },
-        "so2_sub_index": {
-          "west": 3,
-          "east": 2,
-          "central": 4,
-          "south": 2,
-          "north": 7
-        },
-        "co_eight_hour_max": {
-          "west": 0,
-          "east": 0,
-          "central": 0,
-          "south": 0,
-          "north": 0
-        },
-        "no2_one_hour_max": {
-          "west": 46,
-          "east": 40,
-          "central": 41,
-          "south": 36,
-          "north": 30
-        },
-        "so2_twenty_four_hourly": {
-          "west": 5,
-          "east": 4,
-          "central": 6,
-          "south": 3,
-          "north": 11
-        },
-        "pm25_sub_index": {
-          "west": 58,
-          "east": 59,
-          "central": 62,
-          "south": 53,
-          "north": 56
-        },
-        "psi_twenty_four_hourly": {
-          "west": 58,
-          "east": 59,
-          "central": 62,
-          "south": 53,
-          "north": 56
-        },
-        "o3_eight_hour_max": {
-          "west": 6,
-          "east": 32,
-          "central": 17,
-          "south": 16,
-          "north": 21
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSI Readings Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
         }
-      }
-    }
-  ],
-  "api_info": {
-    "status": "healthy"
-  }
-}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .info-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .data-label {
+            font-weight: 600;
+        }
+        .status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            color: white;
+        }
+        .status-good {
+            background-color: #2ecc71;
+        }
+        .status-moderate {
+            background-color: #f39c12;
+        }
+        .status-unhealthy {
+            background-color: #e74c3c;
+        }
+        .last-updated {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-align: right;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Singapore PSI Readings</h1>
+        
+        <div class="info-section">
+            <p><strong>PSI (Pollutant Standards Index)</strong> 是衡量空气质量的指标，数值越低表示空气质量越好。</p>
+            <p>
+                <span class="status status-good">良好 (0-50)</span> 
+                <span class="status status-moderate">中等 (51-100)</span> 
+                <span class="status status-unhealthy">不健康 (101+)</span>
+            </p>
+        </div>
+        
+        <p class="last-updated">最后更新: <span id="updateTime"></span></p>
+        
+        <table id="psiTable">
+            <thead>
+                <tr>
+                    <th>指标类型</th>
+                    <th>中文说明</th>
+                    <th>西部 (West)</th>
+                    <th>东部 (East)</th>
+                    <th>中部 (Central)</th>
+                    <th>南部 (South)</th>
+                    <th>北部 (North)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 数据将通过JS动态插入 -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // 指标类型的中文说明
+        const readingTypeLabels = {
+            "o3_sub_index": "臭氧子指数",
+            "pm10_twenty_four_hourly": "PM10 24小时平均值",
+            "pm10_sub_index": "PM10子指数",
+            "co_sub_index": "一氧化碳子指数",
+            "pm25_twenty_four_hourly": "PM2.5 24小时平均值",
+            "so2_sub_index": "二氧化硫子指数",
+            "co_eight_hour_max": "一氧化碳8小时最大值",
+            "no2_one_hour_max": "二氧化氮1小时最大值",
+            "so2_twenty_four_hourly": "二氧化硫24小时平均值",
+            "pm25_sub_index": "PM2.5子指数",
+            "psi_twenty_four_hourly": "24小时PSI值",
+            "o3_eight_hour_max": "臭氧8小时最大值"
+        };
+
+        // 判断PSI状态的函数
+        function getStatusClass(value) {
+            if (value <= 50) return "status-good";
+            if (value <= 100) return "status-moderate";
+            return "status-unhealthy";
+        }
+
+        // 获取状态文本
+        function getStatusText(value) {
+            if (value <= 50) return "良好";
+            if (value <= 100) return "中等";
+            return "不健康";
+        }
+
+        // 格式化时间
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // 渲染表格
+        function renderTable(data) {
+            // 更新时间显示
+            const updateTime = data.items[0].update_timestamp;
+            document.getElementById('updateTime').textContent = formatTime(updateTime);
+            
+            const readings = data.items[0].readings;
+            const tableBody = document.querySelector('#psiTable tbody');
+            const readingTypes = Object.keys(readings);
+            const regions = ["west", "east", "central", "south", "north"];
+
+            // 清空表格
+            tableBody.innerHTML = '';
+
+            readingTypes.forEach(type => {
+                const row = document.createElement('tr');
+                let rowHtml = `
+                    <td class="data-label">${type}</td>
+                    <td>${readingTypeLabels[type] || '-'}</td>
+                `;
+                
+                regions.forEach(region => {
+                    const value = readings[type][region];
+                    const statusClass = getStatusClass(value);
+                    const statusText = getStatusText(value);
+                    
+                    rowHtml += `
+                        <td>
+                            ${value} 
+                            <span class="status ${statusClass}">${statusText}</span>
+                        </td>
+                    `;
+                });
+                
+                row.innerHTML = rowHtml;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 从API获取数据
+        fetch('https://api.data.gov.sg/v1/environment/psi')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应不正常');
+                }
+                return response.json();
+            })
+            .then(data => {
+                renderTable(data);
+            })
+            .catch(error => {
+                console.error('获取数据时出错:', error);
+                const tableBody = document.querySelector('#psiTable tbody');
+                tableBody.innerHTML = `<tr><td colspan="7">无法加载数据: ${error.message}</td></tr>`;
+            });
+    </script>
+</body>
+</html>
+    
