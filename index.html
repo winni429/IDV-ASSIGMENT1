@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSI Readings Data</title>
+    <title>Singapore PSI Readings</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -86,77 +86,77 @@
 </head>
 <body>
     <div class="container">
-        <h1>Singapore PSI Readings</h1>
+        <h1>Singapore PSI Readings Dashboard</h1>
         
         <div class="info-section">
-            <p><strong>PSI (Pollutant Standards Index)</strong> 是衡量空气质量的指标，数值越低表示空气质量越好。</p>
+            <p><strong>PSI (Pollutant Standards Index)</strong> is a measure of air quality. Lower values indicate better air quality.</p>
             <p>
-                <span class="status status-good">良好 (0-50)</span> 
-                <span class="status status-moderate">中等 (51-100)</span> 
-                <span class="status status-unhealthy">不健康 (101+)</span>
+                <span class="status status-good">Good (0-50)</span> 
+                <span class="status status-moderate">Moderate (51-100)</span> 
+                <span class="status status-unhealthy">Unhealthy (101+)</span>
             </p>
         </div>
         
-        <p class="last-updated">最后更新: <span id="updateTime"></span></p>
-        <p class="refresh-status">下次自动更新: <span id="nextRefreshTime"></span></p>
+        <p class="last-updated">Last Updated: <span id="updateTime"></span></p>
+        <p class="refresh-status">Next Auto-Refresh: <span id="nextRefreshTime"></span></p>
         
         <table id="psiTable">
             <thead>
                 <tr>
-                    <<th>指标类型</</th>
-                    <<th>中文说明</</th>
-                    <<th>西部 (West)</</th>
-                    <<th>东部 (East)</</th>
-                    <<th>中部 (Central)</</th>
-                    <<th>南部 (South)</</th>
-                    <<th>北部 (North)</</th>
+                    <<th>Reading Type</</th>
+                    <<th>Description</</th>
+                    <<th>West</</th>
+                    <<th>East</</th>
+                    <<th>Central</</th>
+                    <<th>South</</th>
+                    <<th>North</</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- 数据将通过JS动态插入 -->
+                <!-- Data will be inserted dynamically via JS -->
             </tbody>
         </table>
     </div>
 
     <script>
-        // 配置：刷新间隔（毫秒），这里设为5分钟（300000ms），和API更新频率匹配
-        const REFRESH_INTERVAL = 300000; 
+        // Refresh interval set to 1 hour (3600000 ms) - matches Singapore's official PSI update frequency
+        const REFRESH_INTERVAL = 3600000; 
         let refreshTimer = null;
 
-        // 指标类型的中文说明
+        // English descriptions for reading types (aligned with Singapore's NEA terms)
         const readingTypeLabels = {
-            "o3_sub_index": "臭氧子指数",
-            "pm10_twenty_four_hourly": "PM10 24小时平均值",
-            "pm10_sub_index": "PM10子指数",
-            "co_sub_index": "一氧化碳子指数",
-            "pm25_twenty_four_hourly": "PM2.5 24小时平均值",
-            "so2_sub_index": "二氧化硫子指数",
-            "co_eight_hour_max": "一氧化碳8小时最大值",
-            "no2_one_hour_max": "二氧化氮1小时最大值",
-            "so2_twenty_four_hourly": "二氧化硫24小时平均值",
-            "pm25_sub_index": "PM2.5子指数",
-            "psi_twenty_four_hourly": "24小时PSI值",
-            "o3_eight_hour_max": "臭氧8小时最大值"
+            "o3_sub_index": "Ozone Sub-Index",
+            "pm10_twenty_four_hourly": "PM10 24-Hour Average",
+            "pm10_sub_index": "PM10 Sub-Index",
+            "co_sub_index": "Carbon Monoxide Sub-Index",
+            "pm25_twenty_four_hourly": "PM2.5 24-Hour Average",
+            "so2_sub_index": "Sulfur Dioxide Sub-Index",
+            "co_eight_hour_max": "Carbon Monoxide 8-Hour Max",
+            "no2_one_hour_max": "Nitrogen Dioxide 1-Hour Max",
+            "so2_twenty_four_hourly": "Sulfur Dioxide 24-Hour Average",
+            "pm25_sub_index": "PM2.5 Sub-Index",
+            "psi_twenty_four_hourly": "24-Hour PSI",
+            "o3_eight_hour_max": "Ozone 8-Hour Max"
         };
 
-        // 判断PSI状态的函数
+        // Get status class based on PSI value
         function getStatusClass(value) {
             if (value <= 50) return "status-good";
             if (value <= 100) return "status-moderate";
             return "status-unhealthy";
         }
 
-        // 获取状态文本
+        // Get status text based on PSI value
         function getStatusText(value) {
-            if (value <= 50) return "良好";
-            if (value <= 100) return "中等";
-            return "不健康";
+            if (value <= 50) return "Good";
+            if (value <= 100) return "Moderate";
+            return "Unhealthy";
         }
 
-        // 格式化时间
+        // Format time to Singapore timezone (24-hour format, consistent with NEA's display)
         function formatTime(dateString) {
             const date = new Date(dateString);
-            return date.toLocaleString('zh-CN', {
+            return date.toLocaleString('en-SG', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
@@ -166,18 +166,18 @@
             });
         }
 
-        // 计算并显示下次刷新时间
+        // Update next refresh time display
         function updateNextRefreshTime() {
             const nextTime = new Date(Date.now() + REFRESH_INTERVAL);
             document.getElementById('nextRefreshTime').textContent = formatTime(nextTime);
         }
 
-        // 渲染表格
+        // Render table with latest PSI data
         function renderTable(data) {
-            // 更新数据时间
+            // Update last updated time with API's timestamp
             const updateTime = data.items[0].update_timestamp;
             document.getElementById('updateTime').textContent = formatTime(updateTime);
-            // 更新下次刷新时间
+            // Update next refresh time
             updateNextRefreshTime();
             
             const readings = data.items[0].readings;
@@ -185,9 +185,10 @@
             const readingTypes = Object.keys(readings);
             const regions = ["west", "east", "central", "south", "north"];
 
-            // 清空表格
+            // Clear existing table content before inserting new data
             tableBody.innerHTML = '';
 
+            // Insert each reading type as a row with region values
             readingTypes.forEach(type => {
                 const row = document.createElement('tr');
                 let rowHtml = `
@@ -195,6 +196,7 @@
                     <td>${readingTypeLabels[type] || '-'}</td>
                 `;
                 
+                // Add value and status badge for each region
                 regions.forEach(region => {
                     const value = readings[type][region];
                     const statusClass = getStatusClass(value);
@@ -213,12 +215,12 @@
             });
         }
 
-        // 从API获取数据
+        // Fetch data from Singapore's open data API and render
         function fetchAndRenderData() {
             fetch('https://api.data.gov.sg/v1/environment/psi')
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error(`网络错误: ${response.status}`);
+                        throw new Error(`Network Error: ${response.status} (${response.statusText})`);
                     }
                     return response.json();
                 })
@@ -226,26 +228,24 @@
                     renderTable(data);
                 })
                 .catch(error => {
-                    console.error('获取数据失败:', error);
+                    console.error('Failed to fetch PSI data:', error);
                     const tableBody = document.querySelector('#psiTable tbody');
-                    tableBody.innerHTML = `<tr><td colspan="7">加载失败: ${error.message}，将在${REFRESH_INTERVAL/60000}分钟后重试</td></tr>`;
-                    // 失败后仍更新下次刷新时间
+                    tableBody.innerHTML = `<tr><td colspan="7">Failed to load data: ${error.message}. Will retry in 1 hour.</td></tr>`;
+                    // Update next refresh time even if fetch fails
                     updateNextRefreshTime();
                 });
         }
 
-        // 初始化：首次加载数据 + 启动定时刷新
+        // Initialize: First data load + start auto-refresh timer
         function init() {
-            // 首次加载
             fetchAndRenderData();
-            // 启动定时刷新
             refreshTimer = setInterval(fetchAndRenderData, REFRESH_INTERVAL);
         }
 
-        // 页面加载完成后初始化
+        // Start initialization when page finishes loading
         window.onload = init;
 
-        // 页面关闭时清除定时器（避免内存泄漏）
+        // Clean up timer when page is closed to avoid unnecessary requests
         window.onunload = function() {
             if (refreshTimer) clearInterval(refreshTimer);
         };
